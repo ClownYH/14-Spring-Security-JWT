@@ -21,9 +21,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         // 1. username password Token(사용자가 로그인 요청시 날린 아이디와 비밀번호를 가지고 있는 임시 객체)
-        UsernamePasswordAuthenticationToken loginToekn = (UsernamePasswordAuthenticationToken) authentication;
-        String username = loginToekn.getName();
-        String password = (String) loginToekn.getCredentials();
+        UsernamePasswordAuthenticationToken loginToken = (UsernamePasswordAuthenticationToken) authentication;
+        String username = loginToken.getName();
+        String password = (String) loginToken.getCredentials();
 
 
         // 2. DB에서 username에 해당하는 정보를 조회한다.
@@ -34,7 +34,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("password가 일치하지 않습니다.");
         }
 
-        return new UsernamePasswordAuthenticationToken(foundUser.getUsername(), foundUser.getPassword(), foundUser.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(foundUser, password, foundUser.getAuthorities());
         // 중요한 건 authorities다. 이것은 검증이 완료된 토큰이다.
     }
 

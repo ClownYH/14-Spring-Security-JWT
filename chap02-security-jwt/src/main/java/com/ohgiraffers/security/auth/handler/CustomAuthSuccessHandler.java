@@ -1,7 +1,7 @@
 package com.ohgiraffers.security.auth.handler;
 
 import com.ohgiraffers.security.auth.model.DetailsUser;
-import com.ohgiraffers.security.common.AuthConstant;
+import com.ohgiraffers.security.common.AuthConstants;
 import com.ohgiraffers.security.common.utils.ConvertUtil;
 import com.ohgiraffers.security.common.utils.TokenUtils;
 import com.ohgiraffers.security.user.entity.User;
@@ -21,10 +21,12 @@ import java.util.HashMap;
 @Configuration
 public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        // chain이 매개변수로 있으면 상속 받기 전의 메소드로 보내거나 혹은 토큰을 못만드는 것으로 보인다.
         User user = ((DetailsUser) authentication.getPrincipal()).getUser();
         JSONObject jsonValue = (JSONObject) ConvertUtil.convertObjectToJsonObject(user);
         HashMap<String, Object> responseMap = new HashMap<>();
+
         JSONObject jsonObject;
 
         if(user.getState().equals("N")){
@@ -35,7 +37,7 @@ public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuc
             responseMap.put("userInfo", jsonValue);
             responseMap.put("message", "로그인 성공");
 
-            response.addHeader(AuthConstant.AUTH_HEADER, AuthConstant.TOKEN_TYPE + " " + token); // 응답 헤더 설정
+            response.addHeader(AuthConstants.AUTH_HEADER, AuthConstants.TOKEN_TYPE + " " + token); // 응답 헤더 설정
         }
 
         jsonObject = new JSONObject(responseMap);
